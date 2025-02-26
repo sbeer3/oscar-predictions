@@ -1,0 +1,30 @@
+{
+  "user-1": {
+    "userName": "ChatGPT",
+    "predictions": {
+      "Best Actor": "Timothée Chalamet",
+      "Best Supporting Actor": "Kieran Culkin",
+      "Best Actress": "Demi Moore",
+      "Best Supporting Actress": "Zoe Saldaña",
+      "Best Animated Feature Film": "The Wild Robot",
+      "Best Animated Short Film": "In the Shadow of the Cypress",
+      "Best Adapted Screenplay": "A Complete Unknown",
+      "Best Cinematography": "The Brutalist",
+      "Best Costume Design": "Wicked",
+      "Best Director": "Sean Baker",
+      "Best Documentary Feature Film": "Sugarcane",
+      "Best Documentary Short Film": "Death by Numbers",
+      "Best Film Editing": "The Brutalist",
+      "Best International Feature Film": "The Seed of the Sacred Fig",
+      "Best Live Action Short Film": "Anuja",
+      "Best Makeup and Hairstyling": "Wicked",
+      "Best Original Score": "Conclave",
+      "Best Original Song": "Never Too Late",
+      "Best Original Screenplay": "The Brutalist",
+      "Best Picture": "Conclave",
+      "Best Production Design": "The Brutalist",
+      "Best Sound": "Emilia Pérez",
+      "Best Visual Effects": "Alien: Romulus"
+    }
+  }
+}

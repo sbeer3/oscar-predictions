@@ -1,0 +1,418 @@
+{
+  "Best Actor": [
+    {
+      "nominee": "Adrien Brody",
+      "movie": "The Brutalist"
+    },
+    {
+      "nominee": "Timothée Chalamet",
+      "movie": "A Complete Unknown"
+    },
+    {
+      "nominee": "Colman Domingo",
+      "movie": "Sing Sing"
+    },
+    {
+      "nominee": "Ralph Fiennes",
+      "movie": "Conclave"
+    },
+    {
+      "nominee": "Sebastian Stan",
+      "movie": "The Apprentice"
+    }
+  ],
+  "Best Supporting Actor": [
+    {
+      "nominee": "Yura Borisov",
+      "movie": "Anora"
+    },
+    {
+      "nominee": "Kieran Culkin",
+      "movie": "A Real Pain"
+    },
+    {
+      "nominee": "Edward Norton",
+      "movie": "A Complete Unknown"
+    },
+    {
+      "nominee": "Guy Pearce",
+      "movie": "The Brutalist"
+    },
+    {
+      "nominee": "Jeremy Strong",
+      "movie": "The Apprentice"
+    }
+  ],
+  "Best Actress": [
+    {
+      "nominee": "Cynthia Erivo",
+      "movie": "Wicked"
+    },
+    {
+      "nominee": "Karla Sofía Gascón",
+      "movie": "Emilia Pérez"
+    },
+    {
+      "nominee": "Mikey Madison",
+      "movie": "Anora"
+    },
+    {
+      "nominee": "Demi Moore",
+      "movie": "The Substance"
+    },
+    {
+      "nominee": "Fernanda Torres",
+      "movie": "I'm Still Here"
+    }
+  ],
+  "Best Supporting Actress": [
+    {
+      "nominee": "Monica Barbaro",
+      "movie": "A Complete Unknown"
+    },
+    {
+      "nominee": "Ariana Grande",
+      "movie": "Wicked"
+    },
+    {
+      "nominee": "Felicity Jones",
+      "movie": "The Brutalist"
+    },
+    {
+      "nominee": "Isabella Rossellini",
+      "movie": "Conclave"
+    },
+    {
+      "nominee": "Zoe Saldaña",
+      "movie": "Emilia Pérez"
+    }
+  ],
+  "Best Animated Feature Film": [
+    {
+      "nominee": "Flow"
+    },
+    {
+      "nominee": "Inside Out 2"
+    },
+    {
+      "nominee": "The Wild Robot"
+    },
+    {
+      "nominee": "Wallace & Gromit: Vengeance Most Fowl"
+    }
+  ],
+  "Best Animated Short Film": [
+    {
+      "nominee": "Better Man"
+    },
+    {
+      "nominee": "In the Shadow of the Cypress"
+    },
+    {
+      "nominee": "Magic Candies"
+    },
+    {
+      "nominee": "Wander to Wonder"
+    },
+    {
+      "nominee": "Yuck!"
+    }
+  ],
+  "Best Adapted Screenplay": [
+    {
+      "nominee": "A Complete Unknown"
+    },
+    {
+      "nominee": "Conclave"
+    },
+    {
+      "nominee": "Dune: Part Two"
+    },
+    {
+      "nominee": "Emilia Pérez"
+    },
+    {
+      "nominee": "Wicked"
+    }
+  ],
+  "Best Cinematography": [
+    {
+      "nominee": "The Brutalist"
+    },
+    {
+      "nominee": "Maria"
+    },
+    {
+      "nominee": "Nosferatu"
+    }
+  ],
+  "Best Costume Design": [
+    {
+      "nominee": "The Brutalist"
+    },
+    {
+      "nominee": "Conclave"
+    },
+    {
+      "nominee": "Emilia Pérez"
+    },
+    {
+      "nominee": "Wicked"
+    },
+    {
+      "nominee": "The Wild Robot"
+    }
+  ],
+  "Best Director": [
+    {
+      "nominee": "The Brutalist"
+    },
+    {
+      "nominee": "A Complete Unknown"
+    },
+    {
+      "nominee": "Emilia Pérez"
+    }
+  ],
+  "Best Documentary Feature Film": [
+    {
+      "nominee": "Black Box Diaries"
+    },
+    {
+      "nominee": "I'm Still Here"
+    },
+    {
+      "nominee": "No Other Land"
+    },
+    {
+      "nominee": "Porcelain War"
+    },
+    {
+      "nominee": "Soundtrack to a Coup d'Etat"
+    },
+    {
+      "nominee": "Sugarcane"
+    }
+  ],
+  "Best Documentary Short Film": [
+    {
+      "nominee": "Death by Numbers"
+    },
+    {
+      "nominee": "I Am Ready, Warden"
+    },
+    {
+      "nominee": "Incident"
+    },
+    {
+      "nominee": "Instruments of a Beating Heart"
+    },
+    {
+      "nominee": "The Only Girl in the Orchestra"
+    }
+  ],
+  "Best Film Editing": [
+    {
+      "nominee": "Anora"
+    },
+    {
+      "nominee": "The Brutalist"
+    },
+    {
+      "nominee": "Conclave"
+    },
+    {
+      "nominee": "Emilia Pérez"
+    },
+    {
+      "nominee": "Wicked"
+    }
+  ],
+  "Best International Feature Film": [
+    {
+      "nominee": "Emilia Pérez"
+    },
+    {
+      "nominee": "I'm Still Here"
+    },
+    {
+      "nominee": "The Girl with the Needle"
+    },
+    {
+      "nominee": "Memoir of a Snail"
+    },
+    {
+      "nominee": "The Seed of the Sacred Fig"
+    }
+  ],
+  "Best Live Action Short Film": [
+    {
+      "nominee": "A Lien"
+    },
+    {
+      "nominee": "Anuja"
+    },
+    {
+      "nominee": "I'm Not a Robot"
+    },
+    {
+      "nominee": "The Last Ranger"
+    },
+    {
+      "nominee": "The Man Who Could Not Remain Silent"
+    }
+  ],
+  "Best Makeup and Hairstyling": [
+    {
+      "nominee": "Dune: Part Two"
+    },
+    {
+      "nominee": "A Different Man"
+    },
+    {
+      "nominee": "Emilia Pérez"
+    },
+    {
+      "nominee": "Nosferatu"
+    },
+    {
+      "nominee": "Wicked"
+    }
+  ],
+  "Best Original Score": [
+    {
+      "nominee": "A Complete Unknown"
+    },
+    {
+      "nominee": "Conclave"
+    },
+    {
+      "nominee": "Gladiator II"
+    },
+    {
+      "nominee": "Nosferatu"
+    },
+    {
+      "nominee": "Wicked"
+    }
+  ],
+  "Best Original Song": [
+    {
+      "nominee": "El Mal",
+      "movie": "Emilia Pérez"
+    },
+    {
+      "nominee": "The Journey",
+      "movie": "The Six Triple Eight"
+    },
+    {
+      "nominee": "Like A Bird",
+      "movie": "Sing Sing"
+    },
+    {
+      "nominee": "Mi Camino",
+      "movie": "Emilia Pérez"
+    },
+    {
+      "nominee": "Never Too Late",
+      "movie": "Elton John: Never Too Late"
+    }
+  ],
+  "Best Original Screenplay": [
+    {
+      "nominee": "Anora"
+    },
+    {
+      "nominee": "The Brutalist"
+    },
+    {
+      "nominee": "A Real Pain"
+    },
+    {
+      "nominee": "September 5"
+    },
+    {
+      "nominee": "The Substance"
+    }
+  ],
+  "Best Picture": [
+    {
+      "nominee": "Anora"
+    },
+    {
+      "nominee": "The Brutalist"
+    },
+    {
+      "nominee": "A Complete Unknown"
+    },
+    {
+      "nominee": "Conclave"
+    },
+    {
+      "nominee": "Dune: Part Two"
+    },
+    {
+      "nominee": "Emilia Pérez"
+    },
+    {
+      "nominee": "I'm Still Here"
+    },
+    {
+      "nominee": "Nickel Boys"
+    },
+    {
+      "nominee": "The Substance"
+    },
+    {
+      "nominee": "Wicked"
+    }
+  ],
+  "Best Production Design": [
+    {
+      "nominee": "The Brutalist"
+    },
+    {
+      "nominee": "Conclave"
+    },
+    {
+      "nominee": "Dune: Part Two"
+    },
+    {
+      "nominee": "Emilia Pérez"
+    },
+    {
+      "nominee": "Wicked"
+    }
+  ],
+  "Best Sound": [
+    {
+      "nominee": "A Complete Unknown"
+    },
+    {
+      "nominee": "Dune: Part Two"
+    },
+    {
+      "nominee": "Emilia Pérez"
+    },
+    {
+      "nominee": "Wicked"
+    }
+  ],
+  "Best Visual Effects": [
+    {
+      "nominee": "Alien: Romulus"
+    },
+    {
+      "nominee": "Flow"
+    },
+    {
+      "nominee": "Kingdom of the Planet of the Apes"
+    },
+    {
+      "nominee": "The Substance"
+    },
+    {
+      "nominee": "The Wild Robot"
+    }
+  ]
+}
