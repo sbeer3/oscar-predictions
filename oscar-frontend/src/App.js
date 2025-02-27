@@ -3,16 +3,19 @@ import NameInputSection from './components/NameInputSection';
 import PredictionForm from './components/PredictionForm';
 import LeaderboardSection from './components/LeaderboardSection';
 import AdminPanel from './components/AdminPanel';
+import Cookies from 'js-cookie'; // Import js-cookie
 
 function App() {
-    const [currentUserName, setCurrentUserName] = useState('');
-    const [categories, setCategories] = useState(null); // Initially null, loading state
-    const [leaderboardData, setLeaderboardData] = useState([]);
-    const [winnersList, setWinnersList] = useState(null); // Winners data for Admin Panel
+    const [categories, setCategories] = useState(null);
+    const [currentUserName, setCurrentUserName] = useState(null);
     const [showPredictionForm, setShowPredictionForm] = useState(false);
     const [showLeaderboard, setShowLeaderboard] = useState(false);
-    const [showAdminPanel, setShowAdminPanel] = useState(false);
-
+    const [showAdminSection, setShowAdminSection] = useState(false);
+    const [winners, setWinners] = useState(null);
+    const [leaderboardData, setLeaderboardData] = useState(null);
+    const [adminMessages, setAdminMessages] = useState([]);
+    const [showGreetingSection, setShowGreetingSection] = useState(false); // New state for greeting section
+    const [areNamesLoaded, setAreNamesLoaded] = useState(false); // Loading state for images
     // useCallback for fetchCategories to prevent unnecessary re-renders
     const fetchCategories = useCallback(async () => {
         try {
@@ -22,40 +25,81 @@ function App() {
                 setCategories(data);
             })
             .catch(error => console.error('Error fetching categories:', error));
-            // if (!response.ok) {
-            //     throw new Error(`HTTP error! status: ${response.status}`);
-            // }
-            // const data = await response.json();
-            // setCategories(data);
         } catch (error) {
             console.error('Error fetching categories:', error);
-            // Handle error state, maybe setCategories to an empty object or display error message
-            setCategories({}); // To avoid app breaking if fetch fails, but form will be empty
+            setCategories({});
         }
     }, []);
 
     useEffect(() => {
         if (currentUserName) {
-            fetchCategories(); // Fetch categories when name is submitted
+            fetchCategories();
         }
-    }, [currentUserName, fetchCategories]); // Dependencies: currentUserName, fetchCategories
+    }, [currentUserName, fetchCategories]);
 
     useEffect(() => {
-        fetchLeaderboard(); // Fetch leaderboard on initial load and when winners are set
-        fetchWinners();     // Fetch winners list for admin panel on initial load and when winners are set
-    }, []); // Fetch on component mount (empty dependency array)
+        fetchLeaderboard();
+        fetchWinners();
 
+        const savedUserName = Cookies.get('userName');
+        if (savedUserName) {
+            setCurrentUserName(savedUserName);
+            // Now, after setting username from cookie, check if they have predictions
+            checkIfUserHasPredictions(savedUserName);
+        }
+    }, []);
+
+    const handleStartPrediction = () => {
+        setShowPredictionForm(true);
+        setShowGreetingSection(false); // Hide greeting when starting predictions
+        setShowLeaderboard(false);      // Hide leaderboard too
+    };
+
+    const handleViewLeaderboardFromGreeting = () => {
+        setShowLeaderboard(true);
+        setShowGreetingSection(false); // Hide greeting when viewing leaderboard
+        setShowPredictionForm(false);     // Hide prediction form
+    };
+
+    const checkIfUserHasPredictions = (userName) => {
+        fetch('http://localhost:5000/api/predictions/usernames') // Use the same /api/usernames endpoint
+            .then(response => response.json())
+            .then(existingUsernames => {
+                const nameExistsInPredictions = existingUsernames.includes(userName);
+                if (nameExistsInPredictions) {
+                    setShowLeaderboard(true); // If name IS in predictions, go to leaderboard
+                    setShowGreetingSection(false);
+                    setShowPredictionForm(false);
+                } else {
+                    setShowLeaderboard(false);
+                    setShowGreetingSection(true); // If name is NOT in predictions, show greeting section
+                    setShowPredictionForm(false);
+                }
+            })
+            .catch(error => {
+                console.error('Error checking user predictions:', error);
+                // In case of error, default to showing greeting section (or handle error as needed)
+                setShowLeaderboard(false);
+                setShowGreetingSection(true);
+                setShowPredictionForm(false);
+            });
+    };
     const handleNameSubmit = (userName) => {
         setCurrentUserName(userName);
-        setShowNameInput(false);
-        setShowPredictionForm(true);
+        Cookies.set('userName', userName, { expires: 7 });
+        checkIfUserHasPredictions(userName); // Check predictions immediately after name submit
+    };
+    const handleLogout = () => {
+        Cookies.remove('userName');
+        setCurrentUserName(null);
         setShowLeaderboard(false);
-        setShowAdminPanel(false);
+        setShowPredictionForm(false);
+        setShowGreetingSection(false); // Hide greeting on logout too
     };
 
     const handlePredictionSubmit = async (predictions) => {
         try {
-            const response = await fetch('/api/predictions', {
+            const response = await fetch('http://localhost:5000/api/predictions', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -81,12 +125,6 @@ function App() {
                 setLeaderboardData(leaderboardData);
             })
             .catch(error => console.error('Error fetching leaderboard:', error));
-            // if (!response.ok) {
-            //     throw new Error(`HTTP error! status: ${response.status}`);
-            // }
-            // console.log(response)
-            // const data = await response.json();
-            // setLeaderboardData(data);
         } catch (error) {
             console.error('Error fetching leaderboard:', error);
         }
@@ -113,7 +151,7 @@ function App() {
 
     const toggleAdminPanel = useCallback((event) => {
         if (event.key === 'a') {
-            setShowAdminPanel(prevShowAdminPanel => !prevShowAdminPanel);
+            setShowAdminSection(prevShowAdminPanel => !prevShowAdminPanel);
             setShowLeaderboard(false); // Hide leaderboard when showing admin
             setShowPredictionForm(false); // Hide prediction form too for clarity
         }
@@ -134,16 +172,29 @@ function App() {
     return (
         <div className="container">
             <h1>Oscar Predictions</h1>
-            {showNameInput && <NameInputSection onNameSubmit={handleNameSubmit} />}
-            {showPredictionForm && categories && (
+
+            {!currentUserName ? (
+                <NameInputSection onNameSubmit={handleNameSubmit} />
+            ) : showLeaderboard ? (
+                <LeaderboardSection leaderboardData={leaderboardData} onLogout={handleLogout} />
+            ) : showGreetingSection ? ( // NEW: Check for showGreetingSection
+                <div id="user-greeting-section">
+                    <h2>Welcome, {currentUserName}!</h2>
+                    <button onClick={handleStartPrediction}>Start Predicting</button>
+                    <button onClick={handleViewLeaderboardFromGreeting}>View Leaderboard</button>
+                    <button onClick={handleLogout}>Change Name/Logout</button>
+                </div>
+            ) : showPredictionForm && categories ? (
                 <PredictionForm categories={categories} onSubmitPredictions={handlePredictionSubmit} />
-            )}
-            {showLeaderboard && <LeaderboardSection leaderboardData={leaderboardData} />}
-            {showAdminPanel && categories && (
+            ) : null /* or handle other states if needed */}
+
+
+            {showAdminSection && (
                 <AdminPanel
                     categories={categories}
-                    onSetWinners={handleSetWinnersAdmin}
-                    winnersList={winnersList}
+                    winners={winners}
+                    onSetWinners={fetchWinners}
+                    adminMessages={adminMessages}
                 />
             )}
         </div>

@@ -1,28 +1,26 @@
 const express = require('express');
 const router = express.Router();
-const fs = require('fs'); // Node.js file system module
+const fs = require('fs');
 const path = require('path');
 
 const predictionsFilePath = path.join(__dirname, '../data/predictions.json');
 
-// Helper function to read predictions from file
+// Helper function to read predictions from file (same as before)
 function getPredictionsFromFile() {
     try {
         const rawData = fs.readFileSync(predictionsFilePath);
         return JSON.parse(rawData);
     } catch (error) {
-        // If file doesn't exist or JSON is invalid, return empty object
         return {};
     }
 }
 
-// Helper function to write predictions to file
+// Helper function to save predictions to file (same as before)
 function savePredictionsToFile(predictions) {
-    const jsonData = JSON.stringify(predictions, null, 2); // Pretty print JSON
+    const jsonData = JSON.stringify(predictions, null, 2);
     fs.writeFileSync(predictionsFilePath, jsonData);
 }
 
-// Load existing predictions from file when server starts (or route file is loaded)
 let userPredictions = getPredictionsFromFile();
 let nextUserId = Object.keys(userPredictions).length > 0 ? Math.max(...Object.keys(userPredictions).map(id => parseInt(id.split('-')[1]))) + 1 : 1;
 
@@ -34,16 +32,24 @@ router.post('/', (req, res) => {
         return res.status(400).json({ message: 'Invalid request data.' });
     }
 
-    const userId = `user-${nextUserId++}`; // Simple unique user ID
+    const userId = `user-${nextUserId++}`;
     userPredictions[userId] = { userName, predictions };
 
-    savePredictionsToFile(userPredictions); // **Save predictions to JSON file**
+    savePredictionsToFile(userPredictions);
 
     res.status(201).json({ message: 'Predictions submitted successfully!', userId: userId });
 });
 
 router.get('/', (req, res) => {
-    res.json(userPredictions); // For debugging/admin - see all predictions (from file now)
+    res.json(userPredictions); // For debugging/admin - see all predictions
+});
+
+// --- NEW ENDPOINT: GET /api/usernames ---
+router.get('/usernames', (req, res) => {
+    const predictions = getPredictionsFromFile(); // Load predictions data
+    const usernames = Object.values(predictions) // Get the array of prediction objects
+                                  .map(prediction => prediction.userName); // Extract userName from each
+    res.json(usernames); // Return an array of usernames as JSON
 });
 
 module.exports = router;

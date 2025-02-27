@@ -57,6 +57,8 @@ function PredictionForm({ categories, onSubmitPredictions }) {
         onSubmitPredictions(predictions);
     };
 
+    
+
     async function fetchImageData(query, type) {
         const searchUrl = `${BASE_URL}/search/${type}?api_key=${API_KEY}&query=${encodeURIComponent(query)}&year=2024`;
 
