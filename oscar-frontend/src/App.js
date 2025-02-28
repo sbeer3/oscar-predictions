@@ -25,7 +25,7 @@ function App() {
     // useCallback for fetchCategories to prevent unnecessary re-renders
     const fetchCategories = useCallback(async () => {
         try {
-            fetch('http://localhost:5000/api/categories') 
+            fetch(`${process.env.REACT_APP_API_URL}/api/categories`) 
             .then(response => response.json())
             .then(data => {
                 setCategories(data);
@@ -46,7 +46,7 @@ function App() {
     // Fetch game settings
     const fetchGameSettings = useCallback(async () => {
         try {
-            const response = await fetch('http://localhost:5000/api/predictions/settings');
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/predictions/settings`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -77,7 +77,7 @@ function App() {
         
         // If user already has predictions, fetch them to pre-populate the form
         try {
-            const response = await fetch(`http://localhost:5000/api/predictions/user/${currentUserName}`);
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/predictions/user/${currentUserName}`);
             if (response.ok) {
                 const data = await response.json();
                 // Store the user's existing predictions in state to pass to PredictionForm
@@ -97,14 +97,14 @@ function App() {
     const checkIfUserHasPredictions = async (userName) => {
         try {
             // First get list of usernames to check if user exists
-            const response = await fetch('http://localhost:5000/api/predictions/usernames');
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/predictions/usernames`);
             const existingUsernames = await response.json();
             
             const nameExistsInPredictions = existingUsernames.includes(userName);
             
             if (nameExistsInPredictions) {
                 // If name exists, fetch their predictions for potential editing
-                const userResponse = await fetch(`http://localhost:5000/api/predictions/user/${userName}`);
+                const userResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/predictions/user/${userName}`);
                 if (userResponse.ok) {
                     const userData = await userResponse.json();
                     setPreviousPredictions(userData.predictions);
@@ -157,7 +157,7 @@ function App() {
                 return;
             }
             
-            const response = await fetch('http://localhost:5000/api/predictions', {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/predictions`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -185,7 +185,7 @@ function App() {
 
     const fetchLeaderboard = async () => {
         try {
-            fetch('http://localhost:5000/api/leaderboard')
+            fetch(`${process.env.REACT_APP_API_URL}/api/leaderboard`)
             .then(response => response.json())
             .then(leaderboardData => {
                 setLeaderboardData(leaderboardData);
@@ -198,7 +198,7 @@ function App() {
 
     const fetchWinners = async () => {
         try {
-            const response = await fetch('http://localhost:5000/api/admin/winners');
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/winners`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
