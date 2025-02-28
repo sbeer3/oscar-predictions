@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const cors = require('cors'); // Enable CORS for frontend to talk to backend
+const cors = require('cors');
+const path = require('path'); // Import the 'path' module
 const categoriesRoutes = require('./routes/categories');
 const predictionsModule = require('./routes/predictions');
 const leaderboardRoutes = require('./routes/leaderboard');
@@ -9,19 +10,23 @@ const adminRoutes = require('./routes/admin');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors()); // Enable CORS for all routes (you can configure more specifically)
-app.use(bodyParser.json()); // Parse JSON request bodies
+app.use(cors());
+app.use(bodyParser.json());
+
+// Serve static files from the frontend's build directory
+app.use(express.static(path.join(__dirname, '../oscar-frontend/build')));
 
 // --- Routes ---
 app.use('/api/categories', categoriesRoutes);
-app.use('/api/predictions', predictionsModule.router); // Use router from the module
+app.use('/api/predictions', predictionsModule.router);
 app.use('/api/leaderboard', leaderboardRoutes.router);
-app.use('/api/admin', adminRoutes); // Admin routes - protect these later
+app.use('/api/admin', adminRoutes);
 
-app.get('/', (req, res) => {
-    res.send('Oscar Predictions Backend is running!');
+// Serve the index.html file for all other requests
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
 });
 
 app.listen(PORT, () => {
-    console.log(`Server listening on port ${PORT}`);
+  console.log(`Server listening on port ${PORT}`);
 });
