@@ -22,6 +22,8 @@ function App() {
         allowEditing: true,
         isLocked: false
     });
+    const [countdown, setCountdown] = useState(""); // State for countdown timer
+
     // useCallback for fetchCategories to prevent unnecessary re-renders
     const fetchCategories = useCallback(async () => {
         try {
@@ -244,11 +246,36 @@ function App() {
         };
     }, [toggleAdminPanel]); // Dependency array includes toggleAdminPanel (for useCallback)
 
+    // Countdown logic
+    useEffect(() => {
+        const targetDate = new Date('2025-03-02T19:00:00'); // Set the target date for the Academy Awards
+        const interval = setInterval(() => {
+            const now = new Date();
+            const timeRemaining = targetDate - now;
+
+            if (timeRemaining <= 0) {
+                clearInterval(interval);
+                setCountdown("The Academy Awards have started!");
+            } else {
+                const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+
+                setCountdown(`${days}d ${hours}h ${minutes}m ${seconds}s`);
+            }
+        }, 1000);
+
+        return () => clearInterval(interval); // Cleanup interval on component unmount
+    }, []);
 
     const [showNameInput, setShowNameInput] = useState(true); // Control visibility of name input
 
     return (
         <div className="container">
+            <div className="countdown-timer">
+                <h2>Countdown to the Academy Awards: {countdown}</h2>
+            </div>
             {!currentUserName ? (
                 <>
                     <NameInputSection onNameSubmit={handleNameSubmit} />
