@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors'); // Enable CORS for frontend to talk to backend
 const categoriesRoutes = require('./routes/categories');
-const predictionsRoutes = require('./routes/predictions');
+const predictionsModule = require('./routes/predictions');
 const leaderboardRoutes = require('./routes/leaderboard');
 const adminRoutes = require('./routes/admin');
 
@@ -14,8 +14,8 @@ app.use(bodyParser.json()); // Parse JSON request bodies
 
 // --- Routes ---
 app.use('/api/categories', categoriesRoutes);
-app.use('/api/predictions', predictionsRoutes);
-app.use('/api/leaderboard', leaderboardRoutes);
+app.use('/api/predictions', predictionsModule.router); // Use router from the module
+app.use('/api/leaderboard', leaderboardRoutes.router);
 app.use('/api/admin', adminRoutes); // Admin routes - protect these later
 
 app.get('/', (req, res) => {

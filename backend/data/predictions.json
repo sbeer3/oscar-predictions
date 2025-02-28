@@ -30,29 +30,7 @@
   "user-2": {
     "userName": "Simon",
     "predictions": {
-      "Best Picture": "THE SUBSTANCE",
-      "Best Actor": "TIMOTHÉE CHALAMET",
-      "Best Actress": "DEMI MOORE",
-      "Supporting Actor": "KIERAN CULKIN",
-      "Supporting Actress": "ZOE SALDAÑA",
-      "Animated Feature": "FLOW",
-      "Cinematography": "THE BRUTALIST",
-      "Makeup and Hairstyling": "WICKED",
-      "Costume Design": "WICKED",
-      "Directing": "CORALIE FARGEAT",
-      "Production Design": "WICKED",
-      "Documentary (Feature)": "PORCELAIN WAR",
-      "Documentary (Short)": "I AM READY, WARDEN",
-      "Short Film (Animated)": "IN THE SHADOW OF THE CYPRESS",
-      "Short Film (Live Action)": "THE LAST RANGER",
-      "Film Editing": "THE BRUTALIST",
-      "Best Sound": "DUNE: PART TWO",
-      "International Feature": "I'M STILL HERE",
-      "Visual Effects": "ALIEN: ROMULUS",
-      "Music (Original Score)": "CONCLAVE",
-      "Music (Original Song)": "EL MAL",
-      "Screenplay (Adapted)": "CONCLAVE",
-      "Screenplay (Original)": "THE SUBSTANCE"
+      "Best Picture": "ANORA"
     }
   }
 }

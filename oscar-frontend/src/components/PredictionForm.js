@@ -4,13 +4,11 @@ const API_KEY = '12003788be788c69459f04273fa2c790'; // Replace with your actual 
 const BASE_URL = 'https://api.themoviedb.org/3';
 const IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
 
-function PredictionForm({ categories, onSubmitPredictions }) {
-    const [predictions, setPredictions] = React.useState({});
+function PredictionForm({ categories, onSubmitPredictions, initialPredictions, isEditing }) {
+    // Initialize predictions with initialPredictions if provided (for editing)
+    const [predictions, setPredictions] = React.useState(initialPredictions || {});
     const [nomineeImages, setNomineeImages] = useState({});
     const [areImagesLoaded, setAreImagesLoaded] = useState(false); // Loading state for images
-    // if (!categories) {
-    //     return <div>Loading categories...</div>; // Still show loading for categories
-    // }
 
     useEffect(() => {
         const fetchImages = async () => {
@@ -91,6 +89,13 @@ function PredictionForm({ categories, onSubmitPredictions }) {
         }
     }
 
+    // Use useEffect to update predictions state when initialPredictions changes
+    useEffect(() => {
+        if (initialPredictions) {
+            setPredictions(initialPredictions);
+        }
+    }, [initialPredictions]);
+
     return (
         <div id="prediction-form">
             {/* Conditionally render the form based on areImagesLoaded */}
@@ -98,34 +103,49 @@ function PredictionForm({ categories, onSubmitPredictions }) {
                 <div>Loading Predictions and Images...</div>
             ) : (
                 <form id="oscar-form" onSubmit={handleSubmit}>
+                    {isEditing && (
+                        <div className="editing-banner">
+                            <div className="editing-message">
+                                <span className="edit-icon">✏️</span>
+                                You are editing your existing predictions. Make your changes and submit.
+                            </div>
+                        </div>
+                    )}
+                    
                     {Object.keys(categories).map(categoryName => (
                         <div key={categoryName} className="category-group" id={categoryNameToId(categoryName)}>
                             <h3 className="category-title">{categoryName}</h3>
-                            {categories[categoryName].map(nomineeObj => (
-                                <div key={nomineeObj.nominee} className="nominee-option">
-                                    <input
-                                        type="radio"
-                                        name={categoryName}
-                                        value={nomineeObj.nominee}
-                                        id={`${categoryNameToId(categoryName)}-${nomineeObj.nominee.replace(/\s+/g, '-')}`}
-                                        onChange={() => handleRadioChange(categoryName, nomineeObj.nominee)}
-                                    />
-                                    <label htmlFor={`${categoryNameToId(categoryName)}-${nomineeObj.nominee.replace(/\s+/g, '-')}`}>
-                                        {/* Images are now guaranteed to be loaded (or loading failed) */}
-                                        {nomineeImages[`${categoryName}-${nomineeObj.nominee}`] && (
-                                            <img
-                                                src={nomineeImages[`${categoryName}-${nomineeObj.nominee}`]}
-                                                alt={nomineeObj.nominee}
-                                                style={{ width: '100px', marginRight: '10px', verticalAlign: 'middle' }}
-                                            />
-                                        )}
-                                        {nomineeObj.nominee} {nomineeObj.movie && `(${nomineeObj.movie})`}
-                                    </label>
-                                </div>
-                            ))}
+                            {categories[categoryName].map(nomineeObj => {
+                                const isChecked = predictions[categoryName] === nomineeObj.nominee;
+                                return (
+                                    <div key={nomineeObj.nominee} className={`nominee-option ${isChecked ? 'selected' : ''}`}>
+                                        <input
+                                            type="radio"
+                                            name={categoryName}
+                                            value={nomineeObj.nominee}
+                                            id={`${categoryNameToId(categoryName)}-${nomineeObj.nominee.replace(/\s+/g, '-')}`}
+                                            checked={isChecked}
+                                            onChange={() => handleRadioChange(categoryName, nomineeObj.nominee)}
+                                        />
+                                        <label htmlFor={`${categoryNameToId(categoryName)}-${nomineeObj.nominee.replace(/\s+/g, '-')}`}>
+                                            {/* Images are now guaranteed to be loaded (or loading failed) */}
+                                            {nomineeImages[`${categoryName}-${nomineeObj.nominee}`] && (
+                                                <img
+                                                    src={nomineeImages[`${categoryName}-${nomineeObj.nominee}`]}
+                                                    alt={nomineeObj.nominee}
+                                                    style={{ width: '100px', marginRight: '10px', verticalAlign: 'middle' }}
+                                                />
+                                            )}
+                                            {nomineeObj.nominee} {nomineeObj.movie && `(${nomineeObj.movie})`}
+                                        </label>
+                                    </div>
+                                );
+                            })}
                         </div>
                     ))}
-                    <button type="submit" id="submitPredictions">Submit Predictions</button>
+                    <button type="submit" id="submitPredictions">
+                        {isEditing ? 'Update Predictions' : 'Submit Predictions'}
+                    </button>
                 </form>
             )}
         </div>

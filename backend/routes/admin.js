@@ -1,33 +1,114 @@
 const express = require('express');
 const router = express.Router();
-const oscarWinners = require('../models/winners'); // Import from models/winners.js
-// const leaderboardModule = require('./leaderboard'); // REMOVE this line - no longer needed for oscarWinners
+const winnerModule = require('../models/winners'); // Import from models/winners.js
+const oscarWinners = winnerModule.winners;
+const gameSettings = winnerModule.settings;
 
 router.post('/set-winner', (req, res) => {
     const winners = req.body;
 
-    if (!winners || typeof winners !== 'object' || Object.keys(winners).length === 0) { // Added check for winners being truthy
+    if (!winners || typeof winners !== 'object' || Object.keys(winners).length === 0) {
         return res.status(400).json({ message: 'Invalid winner data provided.' });
     }
 
-    // Clear existing winners before setting new ones (replace all at once approach)
-    Object.keys(oscarWinners).forEach(key => delete oscarWinners[key]); // Clear previous winners
-
+    // We don't clear existing winners anymore, just update or add new ones
     for (const category in winners) {
         oscarWinners[category] = winners[category]; // Set winners from the request body
     }
-    res.json({ message: 'Winners set successfully!', winners: oscarWinners });
+    
+    res.json({ message: 'Winner set successfully!', winners: oscarWinners });
+});
+
+// Route to clear a specific winner
+router.delete('/winner/:category', (req, res) => {
+    const category = req.params.category;
+    
+    if (oscarWinners[category]) {
+        delete oscarWinners[category];
+        res.json({ message: `Winner for ${category} removed successfully`, winners: oscarWinners });
+    } else {
+        res.status(404).json({ message: `No winner found for category ${category}` });
+    }
+});
+
+// Route to clear all winners
+router.delete('/winners', (req, res) => {
+    Object.keys(oscarWinners).forEach(key => delete oscarWinners[key]);
+    res.json({ message: 'All winners cleared successfully', winners: oscarWinners });
 });
 
 router.get('/winners', (req, res) => {
     res.json(oscarWinners); // Admin view of winners
 });
 
-router.get('/leaderboard', (req, res) => { // Admin view of leaderboard - You might need to adjust this if you were relying on leaderboardModule here. If you were just using it for oscarWinners, you can remove this line too if not needed for calculateLeaderboard
-    const leaderboardModule = require('./leaderboard'); // Import here if still needed for calculateLeaderboard in admin routes
-    const leaderboard = leaderboardModule.calculateLeaderboard(require('./predictions').userPredictions, oscarWinners); // Pass oscarWinners (now imported from models/winners.js)
-    res.json(leaderboard);
+// Get all game settings
+router.get('/settings', (req, res) => {
+    res.json(gameSettings);
 });
 
+// Update a specific game setting
+router.post('/settings', (req, res) => {
+    const updatedSettings = req.body;
+    
+    if (!updatedSettings || typeof updatedSettings !== 'object') {
+        return res.status(400).json({ message: 'Invalid settings data provided.' });
+    }
+    
+    // Update settings
+    for (const key in updatedSettings) {
+        gameSettings[key] = updatedSettings[key];
+    }
+    
+    res.json({ 
+        message: 'Settings updated successfully!', 
+        settings: gameSettings 
+    });
+});
+
+// Lock/unlock predictions - convenience endpoint
+router.post('/settings/toggle-editing', (req, res) => {
+    const { allowEditing } = req.body;
+    
+    if (typeof allowEditing !== 'boolean') {
+        return res.status(400).json({ message: 'Invalid allowEditing value. Must be a boolean.' });
+    }
+    
+    gameSettings.allowEditing = allowEditing;
+    
+    res.json({ 
+        message: `Prediction editing is now ${allowEditing ? 'allowed' : 'disabled'}`,
+        settings: gameSettings
+    });
+});
+
+// Lock the entire game (no more submissions allowed)
+router.post('/settings/toggle-lock', (req, res) => {
+    const { isLocked } = req.body;
+    
+    if (typeof isLocked !== 'boolean') {
+        return res.status(400).json({ message: 'Invalid isLocked value. Must be a boolean.' });
+    }
+    
+    gameSettings.isLocked = isLocked;
+    
+    res.json({ 
+        message: `The game is now ${isLocked ? 'locked' : 'unlocked'}`,
+        settings: gameSettings
+    });
+});
+
+router.get('/leaderboard', (req, res) => {
+    const leaderboardModule = require('./leaderboard');
+    const predictionsModule = require('./predictions');
+    
+    // Get fresh predictions from the file
+    const freshPredictions = predictionsModule.getPredictionsFromFile();
+    
+    const leaderboard = leaderboardModule.calculateLeaderboard(
+        freshPredictions, 
+        oscarWinners
+    );
+    res.json(leaderboard);
+});
 
 module.exports = router;
