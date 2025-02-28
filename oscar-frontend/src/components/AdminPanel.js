@@ -26,7 +26,7 @@ function AdminPanel({ categories, winners, gameSettings, onSetWinners, onUpdateS
 
     const fetchUserPredictions = async () => {
         try {
-            const response = await fetch('http://localhost:5000/api/predictions');
+            const response = await fetch('/api/predictions');
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -62,7 +62,7 @@ function AdminPanel({ categories, winners, gameSettings, onSetWinners, onUpdateS
                 [selectedCategory]: selectedNominee
             };
 
-            const response = await fetch('http://localhost:5000/api/admin/set-winner', {
+            const response = await fetch('/api/admin/set-winner', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -91,7 +91,7 @@ function AdminPanel({ categories, winners, gameSettings, onSetWinners, onUpdateS
         }
 
         try {
-            const response = await fetch(`http://localhost:5000/api/predictions/user/${usernameToDelete}`, {
+            const response = await fetch(`/api/predictions/user/${usernameToDelete}`, {
                 method: 'DELETE'
             });
             
@@ -321,7 +321,7 @@ function AdminPanel({ categories, winners, gameSettings, onSetWinners, onUpdateS
             if (settingName === 'allowEditing') {
                 settingValue = !gameSettings.allowEditing;
                 
-                const response = await fetch('http://localhost:5000/api/admin/settings/toggle-editing', {
+                const response = await fetch('/api/admin/settings/toggle-editing', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -340,7 +340,7 @@ function AdminPanel({ categories, winners, gameSettings, onSetWinners, onUpdateS
             } else if (settingName === 'isLocked') {
                 settingValue = !gameSettings.isLocked;
                 
-                const response = await fetch('http://localhost:5000/api/admin/settings/toggle-lock', {
+                const response = await fetch('/api/admin/settings/toggle-lock', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
