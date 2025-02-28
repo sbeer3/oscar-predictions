@@ -752,11 +752,11 @@ h2 {
     font-size: 0.9rem;
 }
 
-.countdown-timer {
+.countdown-timer h2{
     text-align: center;
     margin: 20px 0;
     font-size: 1.5em;
     color: var(--oscar-gold);
     font-family: 'Playfair Display', serif;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    /* text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); */
 }
