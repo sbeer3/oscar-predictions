@@ -1,5 +1,8 @@
 {
   "dependencies": {
     "create-react-app": "^5.1.0"
+  },
+  "scripts": {
+    "start": "concurrently \"cd backend && npm start\" \"cd frontend && npm start\""
   }
 }
