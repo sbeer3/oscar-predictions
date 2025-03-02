@@ -248,7 +248,7 @@ function App() {
 
     // Countdown logic
     useEffect(() => {
-        const targetDate = new Date('2025-03-02T19:00:00'); // Set the target date for the Academy Awards
+        const targetDate = new Date('2025-03-02T17:00:00'); // Set the target date for the Academy Awards (offset by 2 hours)
         const interval = setInterval(() => {
             const now = new Date();
             const timeRemaining = targetDate - now;
@@ -256,6 +256,22 @@ function App() {
             if (timeRemaining <= 0) {
                 clearInterval(interval);
                 setCountdown("The Academy Awards have started!");
+                
+                // Automatically lock predictions when timer expires
+                fetch('/api/admin/settings/toggle-lock', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ isLocked: true }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Game locked:', data);
+                    // Update local settings
+                    setGameSettings(prevSettings => ({...prevSettings, isLocked: true}));
+                })
+                .catch(error => console.error('Error locking game:', error));
             } else {
                 const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
                 const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
