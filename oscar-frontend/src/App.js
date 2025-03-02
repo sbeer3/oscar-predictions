@@ -272,7 +272,9 @@ function App() {
 
     // Countdown logic
     useEffect(() => {
-        const targetDate = new Date('2025-03-02T17:00:00'); // Set the target date for the Academy Awards (offset by 2 hours)
+        // Set the target date for the Academy Awards in Mountain Standard Time (MST)
+        // 6:00 PM MST on March 2, 2025 = 18:00:00 in 24-hour format
+        const targetDate = new Date('2025-03-02T18:00:00-07:00'); // -07:00 is MST timezone offset
         const interval = setInterval(() => {
             const now = new Date();
             const timeRemaining = targetDate - now;
@@ -314,7 +316,7 @@ function App() {
     return (
         <div className="container">
             <div className="countdown-timer">
-                <h2>Countdown to the Academy Awards: {countdown}</h2>
+                <h2>Countdown to the Academy Awards (MST): {countdown}</h2>
             </div>
             {!currentUserName ? (
                 <>
