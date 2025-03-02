@@ -6,8 +6,18 @@ const categoriesRoutes = require('./routes/categories');
 const predictionsModule = require('./routes/predictions');
 const leaderboardRoutes = require('./routes/leaderboard');
 const adminRoutes = require('./routes/admin');
+const http = require('http');
+const { Server } = require('socket.io');
 
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST']
+  }
+});
+
 const PORT = process.env.PORT || 5000;
 
 app.use(cors());
@@ -15,6 +25,9 @@ app.use(bodyParser.json());
 
 // Serve static files from the frontend's build directory
 app.use(express.static(path.join(__dirname, '../oscar-frontend/build')));
+
+// Make io instance available to routes
+app.set('io', io);
 
 // --- Routes ---
 app.use('/api/categories', categoriesRoutes);
@@ -27,6 +40,15 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
 });
 
-app.listen(PORT, () => {
+// Socket.io connection
+io.on('connection', (socket) => {
+  console.log('New client connected');
+  
+  socket.on('disconnect', () => {
+    console.log('Client disconnected');
+  });
+});
+
+server.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });

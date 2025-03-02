@@ -4,6 +4,7 @@ import PredictionForm from './components/PredictionForm';
 import LeaderboardSection from './components/LeaderboardSection';
 import AdminPanel from './components/AdminPanel';
 import Cookies from 'js-cookie'; // Import js-cookie
+import { io } from 'socket.io-client';
 
 function App() {
     const [categories, setCategories] = useState(null);
@@ -23,6 +24,7 @@ function App() {
         isLocked: false
     });
     const [countdown, setCountdown] = useState(""); // State for countdown timer
+    const [socket, setSocket] = useState(null); // Socket.io connection
 
     // useCallback for fetchCategories to prevent unnecessary re-renders
     const fetchCategories = useCallback(async () => {
@@ -70,6 +72,27 @@ function App() {
             // Now, after setting username from cookie, check if they have predictions
             checkIfUserHasPredictions(savedUserName);
         }
+        
+        // Initialize socket connection
+        const socketUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : '';
+        const newSocket = io(socketUrl);
+        setSocket(newSocket);
+        
+        // Setup event listeners
+        newSocket.on('winnersUpdated', (data) => {
+            console.log('Received winners update via socket.io', data);
+            if (data.winners) {
+                setWinners(data.winners);
+            }
+            if (data.leaderboard) {
+                setLeaderboardData(data.leaderboard);
+            }
+        });
+        
+        // Clean up socket connection when component unmounts
+        return () => {
+            newSocket.disconnect();
+        };
     }, [fetchGameSettings]);
 
     const handleStartPrediction = async () => {
@@ -212,8 +235,9 @@ function App() {
     };
 
     const handleSetWinnersAdmin = async () => {
-        await fetchWinners(); // Re-fetch winners list after setting winners (in AdminPanel component)
-        fetchLeaderboard();    // Re-fetch leaderboard in case winner changes affected scores
+        // No need to fetch, socket will update us
+        // We'll keep this function in case we need to manually refresh
+        console.log("Winner set by admin, waiting for socket update");
     };
 
 

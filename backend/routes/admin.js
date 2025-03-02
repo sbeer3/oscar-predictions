@@ -4,6 +4,22 @@ const winnerModule = require('../models/winners'); // Import from models/winners
 const oscarWinners = winnerModule.winners;
 const gameSettings = winnerModule.settings;
 
+// Utility function to emit winners update via socket.io
+const emitWinnersUpdate = (req) => {
+    const io = req.app.get('io');
+    
+    if (io) {
+        // Calculate fresh leaderboard data
+        const leaderboardModule = require('./leaderboard');
+        const predictionsModule = require('./predictions');
+        const freshPredictions = predictionsModule.getPredictionsFromFile();
+        const leaderboard = leaderboardModule.calculateLeaderboard(freshPredictions, oscarWinners);
+        
+        // Emit the 'winnersUpdated' event with the fresh leaderboard data
+        io.emit('winnersUpdated', { winners: oscarWinners, leaderboard });
+    }
+};
+
 router.post('/set-winner', (req, res) => {
     const winners = req.body;
 
@@ -16,6 +32,9 @@ router.post('/set-winner', (req, res) => {
         oscarWinners[category] = winners[category]; // Set winners from the request body
     }
     
+    // Emit socket.io event to update clients
+    emitWinnersUpdate(req);
+    
     res.json({ message: 'Winner set successfully!', winners: oscarWinners });
 });
 
@@ -25,6 +44,10 @@ router.delete('/winner/:category', (req, res) => {
     
     if (oscarWinners[category]) {
         delete oscarWinners[category];
+        
+        // Emit socket.io event to update clients
+        emitWinnersUpdate(req);
+        
         res.json({ message: `Winner for ${category} removed successfully`, winners: oscarWinners });
     } else {
         res.status(404).json({ message: `No winner found for category ${category}` });
@@ -34,6 +57,10 @@ router.delete('/winner/:category', (req, res) => {
 // Route to clear all winners
 router.delete('/winners', (req, res) => {
     Object.keys(oscarWinners).forEach(key => delete oscarWinners[key]);
+    
+    // Emit socket.io event to update clients
+    emitWinnersUpdate(req);
+    
     res.json({ message: 'All winners cleared successfully', winners: oscarWinners });
 });
 
