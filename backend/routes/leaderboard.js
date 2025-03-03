@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const predictionsModule = require('./predictions');
-const oscarWinners = require('../models/winners');
+const winnerModule = require('../models/winners');
+const oscarWinners = winnerModule.winners;  // Use the winners proxy object
 
 router.get('/', (req, res) => {
     // Get fresh predictions data using the exported function

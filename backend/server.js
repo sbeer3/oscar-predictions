@@ -37,7 +37,7 @@ app.use('/api/admin', adminRoutes);
 
 // Serve the index.html file for all other requests
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
+  res.sendFile(path.join(__dirname, '../oscar-frontend/build', 'index.html'));
 });
 
 // Socket.io connection

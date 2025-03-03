@@ -15,8 +15,13 @@ const emitWinnersUpdate = (req) => {
         const freshPredictions = predictionsModule.getPredictionsFromFile();
         const leaderboard = leaderboardModule.calculateLeaderboard(freshPredictions, oscarWinners);
         
+        console.log('Emitting winners update with leaderboard:', leaderboard.length, 'entries');
+        
         // Emit the 'winnersUpdated' event with the fresh leaderboard data
-        io.emit('winnersUpdated', { winners: oscarWinners, leaderboard });
+        io.emit('winnersUpdated', { 
+            winners: {...oscarWinners}, // Send a copy of the winners object
+            leaderboard: leaderboard // Send the fresh leaderboard
+        });
     }
 };
 
@@ -135,6 +140,16 @@ router.get('/leaderboard', (req, res) => {
         freshPredictions, 
         oscarWinners
     );
+    
+    // Also emit leaderboard update to all clients
+    const io = req.app.get('io');
+    if (io) {
+        io.emit('winnersUpdated', { 
+            winners: {...oscarWinners},
+            leaderboard: leaderboard
+        });
+    }
+    
     res.json(leaderboard);
 });
 

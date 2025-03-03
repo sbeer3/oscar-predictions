@@ -86,6 +86,9 @@ function App() {
             }
             if (data.leaderboard) {
                 setLeaderboardData(data.leaderboard);
+            } else {
+                // If leaderboard isn't included in the socket update, fetch it
+                fetchLeaderboard();
             }
         });
         
@@ -210,12 +213,12 @@ function App() {
 
     const fetchLeaderboard = async () => {
         try {
-            fetch(`/api/leaderboard`)
-            .then(response => response.json())
-            .then(leaderboardData => {
-                setLeaderboardData(leaderboardData);
-            })
-            .catch(error => console.error('Error fetching leaderboard:', error));
+            const response = await fetch(`/api/leaderboard`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const leaderboardData = await response.json();
+            setLeaderboardData(leaderboardData);
         } catch (error) {
             console.error('Error fetching leaderboard:', error);
         }
