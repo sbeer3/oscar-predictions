@@ -37,7 +37,7 @@ function PredictionForm({ categories, onSubmitPredictions, initialPredictions, i
             setNomineeImages(images);
             setAreImagesLoaded(allImagesLoadedSuccessfully); // Set loaded based on success flag
             console.log("nomineeImages state:", images);
-            console.log("areImagesLoaded:", areImagesLoaded); // Debug loading state
+            console.log("areImagesLoaded:", allImagesLoadedSuccessfully); // Debug loading state
         };
 
         fetchImages();

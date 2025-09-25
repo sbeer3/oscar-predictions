@@ -14,9 +14,7 @@ function App() {
     const [showAdminSection, setShowAdminSection] = useState(false);
     const [winners, setWinners] = useState(null);
     const [leaderboardData, setLeaderboardData] = useState(null);
-    const [adminMessages, setAdminMessages] = useState([]);
     const [showGreetingSection, setShowGreetingSection] = useState(false); // New state for greeting section
-    const [areNamesLoaded, setAreNamesLoaded] = useState(false); // Loading state for images
     const [previousPredictions, setPreviousPredictions] = useState(null); // Store user's existing predictions
     const [isEditingPredictions, setIsEditingPredictions] = useState(false); // Flag to indicate when editing
     const [gameSettings, setGameSettings] = useState({
@@ -24,7 +22,6 @@ function App() {
         isLocked: false
     });
     const [countdown, setCountdown] = useState(""); // State for countdown timer
-    const [socket, setSocket] = useState(null); // Socket.io connection
 
     // useCallback for fetchCategories to prevent unnecessary re-renders
     const fetchCategories = useCallback(async () => {
@@ -60,69 +57,35 @@ function App() {
             console.error('Error fetching game settings:', error);
         }
     }, []);
-    
-    useEffect(() => {
-        fetchLeaderboard();
-        fetchWinners();
-        fetchGameSettings();
 
-        const savedUserName = Cookies.get('userName');
-        if (savedUserName) {
-            setCurrentUserName(savedUserName);
-            // Now, after setting username from cookie, check if they have predictions
-            checkIfUserHasPredictions(savedUserName);
-        }
-        
-        // Initialize socket connection
-        const socketUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : '';
-        const newSocket = io(socketUrl);
-        setSocket(newSocket);
-        
-        // Setup event listeners
-        newSocket.on('winnersUpdated', (data) => {
-            console.log('Received winners update via socket.io', data);
-            if (data.winners) {
-                setWinners(data.winners);
-            }
-            if (data.leaderboard) {
-                setLeaderboardData(data.leaderboard);
-            } else {
-                // If leaderboard isn't included in the socket update, fetch it
-                fetchLeaderboard();
-            }
-        });
-        
-        // Clean up socket connection when component unmounts
-        return () => {
-            newSocket.disconnect();
-        };
-    }, [fetchGameSettings]);
-
-    const handleStartPrediction = async () => {
-        setShowPredictionForm(true);
-        setShowGreetingSection(false); // Hide greeting when starting predictions
-        setShowLeaderboard(false);     // Hide leaderboard too
-        
-        // If user already has predictions, fetch them to pre-populate the form
+    const fetchLeaderboard = useCallback(async () => {
         try {
-            const response = await fetch(`/api/predictions/user/${currentUserName}`);
-            if (response.ok) {
-                const data = await response.json();
-                // Store the user's existing predictions in state to pass to PredictionForm
-                setPreviousPredictions(data.predictions);
+            const response = await fetch(`/api/leaderboard`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
+            const leaderboardData = await response.json();
+            setLeaderboardData(leaderboardData);
         } catch (error) {
-            console.error('Error fetching user predictions:', error);
+            console.error('Error fetching leaderboard:', error);
         }
-    };
+    }, []);
 
-    const handleViewLeaderboardFromGreeting = () => {
-        setShowLeaderboard(true);
-        setShowGreetingSection(false); // Hide greeting when viewing leaderboard
-        setShowPredictionForm(false);     // Hide prediction form
-    };
-
-    const checkIfUserHasPredictions = async (userName) => {
+    const fetchWinners = useCallback(async () => {
+        try {
+            const response = await fetch(`/api/admin/winners`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            setWinners(data);
+        } catch (error) {
+            console.error('Error fetching winners list:', error);
+        }
+    }, []);
+    
+    // Define checkIfUserHasPredictions before it's used in useEffect
+    const checkIfUserHasPredictions = useCallback(async (userName) => {
         try {
             // First get list of usernames to check if user exists
             const response = await fetch(`/api/predictions/usernames`);
@@ -163,7 +126,69 @@ function App() {
             setShowGreetingSection(true);
             setShowPredictionForm(false);
         }
+    }, [gameSettings.allowEditing]);
+    
+    useEffect(() => {
+        fetchLeaderboard();
+        fetchWinners();
+        fetchGameSettings();
+
+        const savedUserName = Cookies.get('userName');
+        if (savedUserName) {
+            setCurrentUserName(savedUserName);
+            // Now, after setting username from cookie, check if they have predictions
+            checkIfUserHasPredictions(savedUserName);
+        }
+        
+        // Initialize socket connection
+        const socketUrl = window.location.hostname === 'localhost' ? 'http://localhost:5001' : '';
+        const newSocket = io(socketUrl);
+        
+        // Setup event listeners
+        newSocket.on('winnersUpdated', (data) => {
+            console.log('Received winners update via socket.io', data);
+            if (data.winners) {
+                setWinners(data.winners);
+            }
+            if (data.leaderboard) {
+                setLeaderboardData(data.leaderboard);
+            } else {
+                // If leaderboard isn't included in the socket update, fetch it
+                fetchLeaderboard();
+            }
+        });
+        
+        // Clean up socket connection when component unmounts
+        return () => {
+            newSocket.disconnect();
+        };
+    }, [fetchGameSettings, checkIfUserHasPredictions, fetchLeaderboard, fetchWinners]);
+
+    const handleStartPrediction = async () => {
+        setShowPredictionForm(true);
+        setShowGreetingSection(false); // Hide greeting when starting predictions
+        setShowLeaderboard(false);     // Hide leaderboard too
+        
+        // If user already has predictions, fetch them to pre-populate the form
+        try {
+            const response = await fetch(`/api/predictions/user/${currentUserName}`);
+            if (response.ok) {
+                const data = await response.json();
+                // Store the user's existing predictions in state to pass to PredictionForm
+                setPreviousPredictions(data.predictions);
+            }
+        } catch (error) {
+            console.error('Error fetching user predictions:', error);
+        }
     };
+
+    const handleViewLeaderboardFromGreeting = () => {
+        setShowLeaderboard(true);
+        setShowGreetingSection(false); // Hide greeting when viewing leaderboard
+        setShowPredictionForm(false);     // Hide prediction form
+        setShowAdminSection(false);     // Hide admin panel
+    };
+
     const handleNameSubmit = (userName) => {
         setCurrentUserName(userName);
         Cookies.set('userName', userName, { expires: 7 });
@@ -208,32 +233,6 @@ function App() {
         } catch (error) {
             console.error('Error submitting predictions:', error);
             alert('Error submitting predictions. Please try again.');
-        }
-    };
-
-    const fetchLeaderboard = async () => {
-        try {
-            const response = await fetch(`/api/leaderboard`);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const leaderboardData = await response.json();
-            setLeaderboardData(leaderboardData);
-        } catch (error) {
-            console.error('Error fetching leaderboard:', error);
-        }
-    };
-
-    const fetchWinners = async () => {
-        try {
-            const response = await fetch(`/api/admin/winners`);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const data = await response.json();
-            setWinners(data);
-        } catch (error) {
-            console.error('Error fetching winners list:', error);
         }
     };
 
@@ -313,8 +312,6 @@ function App() {
 
         return () => clearInterval(interval); // Cleanup interval on component unmount
     }, []);
-
-    const [showNameInput, setShowNameInput] = useState(true); // Control visibility of name input
 
     return (
         <div className="container">
